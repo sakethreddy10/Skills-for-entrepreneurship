@@ -31,7 +31,7 @@ const Home = () => {
               Build your skills, grow your business, and transform your future with our comprehensive learning platform.
             </p>
             <div className="space-x-4">
-              <Link to="/dashboard" className="btn-primary">
+              <Link to="/auth" className="btn-primary">
                 Get Started
               </Link>
               <Link to="/courses" className="btn-secondary">
