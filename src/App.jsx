@@ -6,7 +6,6 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
-import CoursePage from './pages/CoursePage';
 import AdminPanel from './pages/AdminPanel';
 import Profile from './pages/Profile';
 import AuthPage from './pages/AuthPage';
@@ -24,7 +23,6 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/courses" element={<Courses />} />
-                <Route path="/course/:id" element={<CoursePage />} />
 
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
