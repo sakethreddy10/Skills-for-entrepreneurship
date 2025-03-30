@@ -1,53 +1,71 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-
-const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-    const login = async (username, password) => {
+  useEffect(() => {
+    const verifyToken = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
         try {
-            const response = await loginUser(username, password);
-            setUser(response.user);
-            setToken(response.token);
-            localStorage.setItem('token', response.token);
-            return response;
+          // Verify token with backend
+          const response = await axios.get('http://localhost:5000/api/profile', {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          
+          setUser(response.data.user);
+          setIsAuthenticated(true);
         } catch (error) {
-            throw new Error(error.message || 'Login failed');
+          console.error('Token verification failed:', error);
+          localStorage.removeItem('token');
         }
+      }
+      setLoading(false);
     };
 
-    const signup = async (username, password) => {
-        try {
-            const response = await signupUser(username, password);
-            setUser(response.user);
-            setToken(response.token);
-            localStorage.setItem('token', response.token);
-            return response;
-        } catch (error) {
-            throw new Error(error.message || 'Signup failed');
-        }
-    };
+    verifyToken();
+  }, []);
 
-    const logout = () => {
-        setUser(null);
-        setToken(null);
-        localStorage.removeItem('token');
-    };
+  const login = (userData, token) => {
+    localStorage.setItem('token', token);
+    setUser(userData);
+    setIsAuthenticated(true);
+    navigate('/dashboard');
+  };
 
-    return (
-        <AuthContext.Provider value={{ user, token, login, signup, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    setIsAuthenticated(false);
+    navigate('/auth');
+  };
+
+  return (
+    <AuthContext.Provider value={{ 
+      user, 
+      isAuthenticated, 
+      loading,
+      login, 
+      logout 
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

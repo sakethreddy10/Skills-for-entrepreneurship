@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Sun, Moon, Menu } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -6,14 +6,13 @@ import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = () => {
   const { darkMode, toggleDarkMode } = useTheme();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const navigate = useNavigate();
 
-  // Handle logout
   const handleLogout = () => {
     logout();
-    navigate('/auth');
+    setIsMenuOpen(false);
   };
 
   return (
@@ -35,7 +34,9 @@ const Navbar = () => {
             {isAuthenticated && (
               <>
                 <Link to="/dashboard" className="nav-link">Dashboard</Link>
-                <Link to="/profile" className="nav-link">Profile</Link>
+                <Link to="/profile" className="nav-link">
+                  {user?.name || 'Profile'}
+                </Link>
               </>
             )}
 
@@ -43,23 +44,33 @@ const Navbar = () => {
             {isAuthenticated ? (
               <button onClick={handleLogout} className="nav-link">Logout</button>
             ) : (
-              <Link to="/auth" className="nav-link">SignIn/SignUp</Link>
+              <Link to="/auth" className="nav-link">Sign In</Link>
             )}
 
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
               className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+              aria-label="Toggle dark mode"
             >
               {darkMode ? <Sun className="h-5 w-5 text-white" /> : <Moon className="h-5 w-5" />}
             </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center space-x-4">
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+              aria-label="Toggle dark mode"
+            >
+              {darkMode ? <Sun className="h-5 w-5 text-white" /> : <Moon className="h-5 w-5" />}
+            </button>
+            
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+              aria-label="Toggle menu"
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -69,28 +80,55 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-4 pt-4 pb-4 space-y-2">
-            <Link to="/" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Home</Link>
-            <Link to="/courses" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Courses</Link>
+        <div className="md:hidden bg-white dark:bg-gray-800 shadow-lg">
+          <div className="px-4 pt-2 pb-4 space-y-2">
+            <Link 
+              to="/" 
+              className="mobile-nav-link" 
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link 
+              to="/courses" 
+              className="mobile-nav-link" 
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Courses
+            </Link>
 
             {isAuthenticated ? (
               <>
-                <Link to="/dashboard" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
-                <Link to="/profile" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>Profile</Link>
-                <button onClick={handleLogout} className="mobile-nav-link">Logout</button>
+                <Link 
+                  to="/dashboard" 
+                  className="mobile-nav-link" 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link 
+                  to="/profile" 
+                  className="mobile-nav-link" 
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {user?.name || 'Profile'}
+                </Link>
+                <button 
+                  onClick={handleLogout} 
+                  className="mobile-nav-link text-left w-full"
+                >
+                  Logout
+                </button>
               </>
             ) : (
-              <Link to="/auth" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>SignIn/SignUp</Link>
+              <Link 
+                to="/auth" 
+                className="mobile-nav-link" 
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Sign In
+              </Link>
             )}
-
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={toggleDarkMode}
-              className="p-2 rounded-lg w-full text-left hover:bg-gray-200 dark:hover:bg-gray-700"
-            >
-              {darkMode ? 'Light Mode' : 'Dark Mode'}
-            </button>
           </div>
         </div>
       )}

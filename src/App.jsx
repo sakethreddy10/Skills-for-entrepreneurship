@@ -13,17 +13,16 @@ import Courses from './pages/Courses';
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Router>
+    <Router>
+      <ThemeProvider>
+        <AuthProvider>
           <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
             <Navbar />
-            <main>
+            <main className="container mx-auto px-4 py-8">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/courses" element={<Courses />} />
-
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/admin" element={<AdminPanel />} />
@@ -31,9 +30,9 @@ function App() {
             </main>
             <Footer />
           </div>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </Router>
   );
 }
 
