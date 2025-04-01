@@ -78,6 +78,12 @@ const authMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ 
+        error: 'Token expired',
+        code: 'TOKEN_EXPIRED' 
+      });
+    } // <- THIS BRACE WAS MISSING
     console.error('Auth Middleware Error:', error);
     res.status(401).json({ error: 'Invalid token' });
   }
@@ -209,5 +215,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
 module.exports = app;

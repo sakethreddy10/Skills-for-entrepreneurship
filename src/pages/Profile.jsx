@@ -6,7 +6,7 @@ const Profile = () => {
       {/* Profile Header */}
       <div className="flex items-center gap-4">
         <img
-          src="https://via.placeholder.com/100"
+          src="https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
           alt="User Profile"
           className="w-24 h-24 rounded-full border-4 border-indigo-500"
         />
